@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Prediction Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Prediction Result</h1>
+        <p><strong>Input:</strong> {{ text }}</p>
+        <p><strong>Predicted Emotion:</strong> <span class="highlight">{{ prediction }}</span></p>
+        <a href="{{ url_for('home') }}" class="link-btn">Try Again</a>
+        <a href="{{ url_for('history') }}" class="link-btn">View History</a>
+    </div>
+</body>
+</html>

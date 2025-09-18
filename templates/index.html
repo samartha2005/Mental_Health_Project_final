@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mental Health Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Mental Health Prediction</h1>
+        <p>Type your text below to check emotional state</p>
+        <form action="{{ url_for('make_prediction') }}" method="POST">
+            <textarea name="user_input" rows="6" placeholder="Write your thoughts here..."></textarea><br>
+            <button type="submit">Predict</button>
+        </form>
+        <a href="{{ url_for('history') }}" class="link-btn">View History</a>
+    </div>
+</body>
+</html>

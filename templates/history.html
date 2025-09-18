@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User History</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Recent Predictions</h1>
+        {% if records %}
+            <table>
+                <tr>
+                    <th>Text</th>
+                    <th>Prediction</th>
+                    <th>Time</th>
+                </tr>
+                {% for r in records %}
+                <tr>
+                    <td>{{ r['text'] }}</td>
+                    <td>{{ r['prediction'] }}</td>
+                    <td>{{ r['timestamp'] }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p>No history available.</p>
+        {% endif %}
+        <a href="{{ url_for('home') }}" class="link-btn">Back</a>
+    </div>
+</body>
+</html>
