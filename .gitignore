@@ -48,3 +48,6 @@ results/*.pdf
 *.log
 *.tmp
 *.DS_Store
+
+
+src/models/
