@@ -13,7 +13,7 @@ def train_model(X, y):
     global model
     model.fit(X, y)
 
-def load_model(path="../results/ml_model.pkl"):
+def load_model(path="src/models/trained_model.pkl"):
     """
     Load trained model from disk.
     """
@@ -25,5 +25,6 @@ def load_model(path="../results/ml_model.pkl"):
 def predict(model, features):
     """
     Make predictions on features using the trained model.
+    Returns a single string prediction.
     """
-    return model.predict(features)
+    return model.predict(features)[0]  # <-- return single value, not array

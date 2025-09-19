@@ -1,21 +1,17 @@
 # src/feature_extraction.py
-from sklearn.feature_extraction.text import TfidfVectorizer
 import pickle
+import os
+from src.data_preprocessing import preprocess_text
 
-# Global TF-IDF vectorizer
-vectorizer = TfidfVectorizer(max_features=5000)
+# Load trained TF-IDF vectorizer
+VECTORIZER_PATH = os.path.join("src/models", "tfidf_vectorizer.pkl")
+with open(VECTORIZER_PATH, "rb") as f:
+    vectorizer = pickle.load(f)
 
-def fit_vectorizer(texts):
+def extract_features(text: str):
     """
-    Fit the TF-IDF vectorizer on training texts.
-    This function ONLY fits in memory.
-    Saving is handled outside this function.
+    Preprocess input text and transform it to TF-IDF features
+    using the trained vectorizer.
     """
-    global vectorizer
-    vectorizer.fit(texts)
-
-def transform_text(texts):
-    """
-    Transform texts to TF-IDF features using the fitted vectorizer.
-    """
-    return vectorizer.transform(texts)
+    cleaned_text = preprocess_text(text)
+    return vectorizer.transform([cleaned_text])
