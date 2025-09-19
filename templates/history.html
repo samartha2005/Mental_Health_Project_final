@@ -13,12 +13,20 @@
                 <tr>
                     <th>Text</th>
                     <th>Prediction</th>
+                    <th>Agentic AI Suggestions</th>
                     <th>Time</th>
                 </tr>
                 {% for r in records %}
                 <tr>
                     <td>{{ r['text'] }}</td>
                     <td>{{ r['prediction'] }}</td>
+                    <td>
+                        <ul>
+                        {% for s in r['suggestions'] %}
+                            <li>{{ s }}</li>
+                        {% endfor %}
+                        </ul>
+                    </td>
                     <td>{{ r['timestamp'] }}</td>
                 </tr>
                 {% endfor %}

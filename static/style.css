@@ -1,6 +1,9 @@
+/* -----------------------------
+   Body & Background
+----------------------------- */
 body {
     font-family: Arial, sans-serif;
-    background: linear-gradient(to right, #83a4d4, #b6fbff);
+    background: linear-gradient(to right, #a1c4fd, #c2e9fb); /* calm gradient */
     margin: 0;
     padding: 0;
     display: flex;
@@ -9,15 +12,21 @@ body {
     min-height: 100vh;
 }
 
+/* -----------------------------
+   Main Container
+----------------------------- */
 .container {
-    background: white;
+    background: #ffffffdd; /* slightly transparent white */
     padding: 30px;
     border-radius: 15px;
-    box-shadow: 0px 4px 15px rgba(0,0,0,0.2);
-    width: 600px;
+    box-shadow: 0px 6px 20px rgba(0,0,0,0.15);
+    width: 650px;
     text-align: center;
 }
 
+/* -----------------------------
+   Headings & Text
+----------------------------- */
 h1 {
     color: #2c3e50;
     margin-bottom: 20px;
@@ -32,6 +41,14 @@ textarea {
     font-size: 16px;
 }
 
+.highlight {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+/* -----------------------------
+   Buttons / Links
+----------------------------- */
 button, .link-btn {
     background: #2980b9;
     color: white;
@@ -42,28 +59,77 @@ button, .link-btn {
     cursor: pointer;
     text-decoration: none;
     display: inline-block;
+    transition: 0.3s ease;
 }
 
 button:hover, .link-btn:hover {
     background: #1f6391;
 }
 
+/* -----------------------------
+   Table Styling
+----------------------------- */
 table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
+    table-layout: fixed; /* make columns fixed width for wrapping */
+    word-wrap: break-word; /* long text wraps */
 }
 
 table, th, td {
     border: 1px solid #ddd;
     padding: 12px;
+    vertical-align: top;
 }
 
 th {
     background-color: #f4f4f4;
 }
 
-.highlight {
-    color: #e74c3c;
-    font-weight: bold;
+td ul {
+    padding-left: 20px;
+    margin: 0;
+    list-style-type: disc;
+}
+
+td ul li {
+    text-align: left;
+    line-height: 1.4;
+}
+
+/* -----------------------------
+   Suggestions Styling
+----------------------------- */
+.suggestions {
+    padding-left: 20px;
+    text-align: left;
+    list-style-type: disc;
+}
+
+.user-input, .prediction {
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #f4f4f4;
+    margin-bottom: 15px;
+    word-wrap: break-word; /* wrap long text */
+}
+
+/* -----------------------------
+   Responsive Adjustments
+----------------------------- */
+@media (max-width: 700px) {
+    .container {
+        width: 90%;
+        padding: 20px;
+    }
+
+    textarea {
+        font-size: 14px;
+    }
+
+    table, th, td {
+        font-size: 14px;
+        padding: 8px;
+    }
 }

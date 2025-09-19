@@ -12,6 +12,13 @@
         <p><strong>Predicted Emotion:</strong> <span class="highlight">{{ prediction }}</span></p>
         <a href="{{ url_for('home') }}" class="link-btn">Try Again</a>
         <a href="{{ url_for('history') }}" class="link-btn">View History</a>
+        <h2>Suggestions:</h2>
+        <ul>
+        {% for s in suggestions %}
+        <li>{{ s }}</li>
+        {% endfor %}
+        </ul>
+
     </div>
 </body>
 </html>
