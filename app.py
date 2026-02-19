@@ -1,87 +1,107 @@
 # app.py
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from src.feature_extraction import extract_features
 from src.utils import get_agentic_suggestions, load_model, predict
 from pymongo import MongoClient
 from datetime import datetime
 from bson.objectid import ObjectId
-import os
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-app.secret_key = "supersecretkey"   # session key
+app.secret_key = "supersecretkey"   # Change during deployment
 
-# Load ML model once
+# -------------------- LOAD MODEL --------------------
+
 model = load_model()
 
-# Connect to MongoDB
+# -------------------- DATABASE CONNECTION --------------------
+
 client = MongoClient("mongodb+srv://samartha:root@mental-health-cluster.4ee1v2a.mongodb.net/?retryWrites=true&w=majority&appName=mental-health-cluster")
 db = client["mental_health_db"]
 
 predictions_collection = db["user_predictions"]
 users_collection = db["users"]
 
-
-# -------------------- ROUTES --------------------
+# -------------------- HOME --------------------
 
 @app.route("/")
 def home():
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-    return render_template("index.html")
-
+    return redirect(url_for("login"))
 
 # -------------------- REGISTER --------------------
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
+        # 🔥 If already logged in → go to dashboard
+    if "user_id" in session:
+        return redirect(url_for("dashboard"))
     if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
+        username = request.form["username"].strip()
+        password = request.form["password"].strip()
+
+        if not username or not password:
+            flash("All fields are required.", "error")
+            return redirect(url_for("register"))
 
         existing_user = users_collection.find_one({"username": username})
         if existing_user:
-            return "Username already exists"
+            flash("Username already exists.", "error")
+            return redirect(url_for("register"))
+
+        hashed_password = generate_password_hash(password)
 
         users_collection.insert_one({
             "username": username,
-            "password": password
+            "password": hashed_password
         })
 
+        flash("Registration successful! Please login.", "success")
         return redirect(url_for("login"))
 
     return render_template("register.html")
-
 
 # -------------------- LOGIN --------------------
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    # 🔥 If already logged in → go to dashboard
+    if "user_id" in session:
+        return redirect(url_for("dashboard"))
+
     if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
+        username = request.form["username"].strip()
+        password = request.form["password"].strip()
 
-        user = users_collection.find_one({
-            "username": username,
-            "password": password
-        })
+        user = users_collection.find_one({"username": username})
 
-        if user:
+        if user and check_password_hash(user["password"], password):
             session["user_id"] = str(user["_id"])
             session["username"] = user["username"]
-            return redirect(url_for("home"))
+            flash("Login successful!", "success")
+            return redirect(url_for("dashboard"))
 
-        return "Invalid credentials"
+        flash("Invalid username or password.", "error")
+        return redirect(url_for("login"))
 
     return render_template("login.html")
 
+
+# -------------------- DASHBOARD --------------------
+
+@app.route("/dashboard")
+def dashboard():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    return render_template("dashboard.html", username=session["username"])
 
 # -------------------- LOGOUT --------------------
 
 @app.route("/logout")
 def logout():
     session.clear()
+    flash("Logged out successfully.", "success")
     return redirect(url_for("login"))
-
 
 # -------------------- PREDICT --------------------
 
@@ -90,18 +110,19 @@ def make_prediction():
     if "user_id" not in session:
         return redirect(url_for("login"))
 
-    user_text = request.form.get("user_input", "")
+    user_text = request.form.get("user_input", "").strip()
 
-    if not user_text.strip():
-        return render_template("result.html", text=user_text, prediction="No input", suggestions=[])
+    if not user_text:
+        flash("Please enter some text.", "error")
+        return redirect(url_for("dashboard"))
 
     features = extract_features(user_text)
     prediction = predict(model, features)
     suggestions = get_agentic_suggestions(prediction)
 
-    # Save to MongoDB with user_id
     record = {
         "user_id": ObjectId(session["user_id"]),
+        "username": session["username"],
         "text": user_text,
         "prediction": prediction,
         "suggestions": suggestions,
@@ -110,8 +131,12 @@ def make_prediction():
 
     predictions_collection.insert_one(record)
 
-    return render_template("result.html", text=user_text, prediction=prediction, suggestions=suggestions)
-
+    return render_template(
+        "result.html",
+        text=user_text,
+        prediction=prediction,
+        suggestions=suggestions
+    )
 
 # -------------------- HISTORY --------------------
 
@@ -127,7 +152,6 @@ def history():
     )
 
     return render_template("history.html", records=records)
-
 
 # -------------------- RUN --------------------
 

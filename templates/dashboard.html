@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | MindCare AI{% endblock %}
+
+{% block content %}
+
+<div class="card">
+    <h2>Welcome, {{ username }} 👋</h2>
+    <h3>Mental Health Prediction</h3>
+    <p>Type your text below to check emotional state</p>
+
+    <form action="{{ url_for('make_prediction') }}" method="POST">
+        <textarea name="user_input" rows="6" placeholder="Write your thoughts here..."></textarea>
+        <br><br>
+        <button type="submit">Predict</button>
+    </form>
+</div>
+
+{% endblock %}
