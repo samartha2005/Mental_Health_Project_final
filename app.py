@@ -1,4 +1,5 @@
 # app.py
+import os
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from src.feature_extraction import extract_features
 from src.utils import get_agentic_suggestions, load_model, predict
@@ -8,7 +9,12 @@ from bson.objectid import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-app.secret_key = "supersecretkey"   # Change during deployment
+
+# -------------------- SECURITY CONFIG --------------------
+
+# Use environment variable in production
+# Fallback keeps local development working
+app.secret_key = os.environ.get("SECRET_KEY", "supersecretkey_dev")
 
 # -------------------- LOAD MODEL --------------------
 
@@ -16,7 +22,12 @@ model = load_model()
 
 # -------------------- DATABASE CONNECTION --------------------
 
-client = MongoClient("mongodb+srv://samartha:root@mental-health-cluster.4ee1v2a.mongodb.net/?retryWrites=true&w=majority&appName=mental-health-cluster")
+MONGO_URI = os.environ.get(
+    "MONGO_URI",
+    "mongodb+srv://samartha:root@mental-health-cluster.4ee1v2a.mongodb.net/?retryWrites=true&w=majority&appName=mental-health-cluster"
+)
+
+client = MongoClient(MONGO_URI)
 db = client["mental_health_db"]
 
 predictions_collection = db["user_predictions"]
@@ -32,9 +43,9 @@ def home():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-        # 🔥 If already logged in → go to dashboard
     if "user_id" in session:
         return redirect(url_for("dashboard"))
+
     if request.method == "POST":
         username = request.form["username"].strip()
         password = request.form["password"].strip()
@@ -64,7 +75,6 @@ def register():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    # 🔥 If already logged in → go to dashboard
     if "user_id" in session:
         return redirect(url_for("dashboard"))
 
@@ -84,7 +94,6 @@ def login():
         return redirect(url_for("login"))
 
     return render_template("login.html")
-
 
 # -------------------- DASHBOARD --------------------
 
