@@ -6,14 +6,52 @@
 
 <div class="card">
     <h2>Welcome, {{ username }} 👋</h2>
-    <h3>Mental Health Prediction</h3>
-    <p>Type your text below to check emotional state</p>
+    <h3>🧠 Mental Health Prediction</h3>
+
+    <!-- STORY SECTION -->
+    <div style="background:#f4f6f9; padding:15px; border-radius:10px; margin-bottom:20px;">
+        <h4>📖 Read the Story Below:</h4>
+<p>
+Rahul has been feeling <b>restless</b> for the past few weeks.
+Sometimes he feels 💔 <b>hopeless</b> about his future.
+He often feels completely <b>overwhelmed</b> with responsibilities.
+Some days he suddenly feels 😊 <b>happy</b> without any reason.
+Recently, he even had thoughts about <b>suicide</b>, which scared him deeply.
+At times, he experiences symptoms similar to <b>psychosis</b>, making him confused and disconnected from reality.
+</p>
+    </div>
+
+    <p>💬 Write a short review/comment about Rahul’s situation:</p>
 
     <form action="{{ url_for('make_prediction') }}" method="POST">
-        <textarea name="user_input" rows="6" placeholder="Write your thoughts here..."></textarea>
+        <textarea id="user_input" name="user_input" rows="6" 
+        placeholder="Example: I think he is feeling hopeless and tired..."></textarea>
+
         <br><br>
+
+        <!-- KEYWORD SUGGESTIONS -->
+        <div style="margin-bottom:15px;">
+            <strong>💡 Suggested Keywords:</strong><br>
+
+<span class="keyword" onclick="addKeyword('restless')">restless</span> |
+<span class="keyword" onclick="addKeyword('happy')">happy</span> |
+<span class="keyword" onclick="addKeyword('suicide')">suicide</span> |
+<span class="keyword" onclick="addKeyword('no purpose')">no purpose</span> |
+<span class="keyword" onclick="addKeyword('stress')">stress</span> |
+<span class="keyword" onclick="addKeyword('mania')">mania</span>
+        </div>
+
         <button type="submit">Predict</button>
     </form>
 </div>
+
+<!-- SIMPLE JAVASCRIPT -->
+<script>
+function addKeyword(word) {
+    var textarea = document.getElementById("user_input");
+    textarea.value += " " + word;
+    textarea.focus();
+}
+</script>
 
 {% endblock %}
